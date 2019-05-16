@@ -1,422 +1,285 @@
-# Bookmark Archiver <img src="https://nicksweeting.com/images/archive.png" height="22px"/>  [![Github Stars](https://img.shields.io/github/stars/pirate/bookmark-archiver.svg)](https://github.com/pirate/bookmark-archiver) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
+<div align="center">
+<img src="https://i.imgur.com/4nkFjdv.png" height="80px">
+<h1>ArchiveBox<br/><sub>The open-source self-hosted web archive.</sub></h1>
 
-    "Your own personal Way-Back Machine"
+▶️ <a href="https://github.com/pirate/ArchiveBox/wiki/Quickstart">Quickstart</a> | 
+<a href="https://archive.sweeting.me">Demo</a> | 
+<a href="https://github.com/pirate/ArchiveBox">Github</a> | 
+<a href="https://github.com/pirate/ArchiveBox/wiki">Documentation</a> | 
+<a href="#background--motivation">Info & Motivation</a> | 
+<a href="https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community">Community</a> | 
+<a href="https://github.com/pirate/ArchiveBox/wiki/Roadmap">Roadmap</a>
 
-▶️ [Quickstart](#quickstart) | [Details](#details) | [Configuration](#configuration) | [Manual Setup](#manual-setup) | [Troubleshooting](#troubleshooting) | [Changelog](#changelog)
+<pre>
+"Your own personal internet archive" (网站存档 / 爬虫)
+</pre>
 
----
+<a href="http://webchat.freenode.net?channels=ArchiveBox&uio=d4"><img src="https://img.shields.io/badge/Community_chat-IRC-%2328A745.svg"/></a>
+<a href="https://github.com/pirate/ArchiveBox/blob/master/LICENSE"><img src="https://img.shields.io/badge/Open_source-MIT-green.svg?logo=git&logoColor=green"/></a>
+<a href="https://github.com/pirate/ArchiveBox/commits/dev"><img src="https://img.shields.io/github/last-commit/pirate/ArchiveBox.svg?logo=Sublime+Text&logoColor=green&label=Active"/></a>
+<a href="https://github.com/pirate/ArchiveBox"><img src="https://img.shields.io/github/stars/pirate/ArchiveBox.svg?logo=github&label=Stars&logoColor=blue"/></a>
+<a href="https://test.pypi.org/project/archivebox/"><img src="https://img.shields.io/badge/Python-%3E%3D3.5-yellow.svg?logo=python&logoColor=yellow"/></a>
+<a href="https://github.com/pirate/ArchiveBox/wiki/Install#dependencies"><img src="https://img.shields.io/badge/Chromium-%3E%3D59-orange.svg?logo=Google+Chrome&logoColor=orange"/></a>
+<a href="https://hub.docker.com/r/nikisweeting/archivebox"><img src="https://img.shields.io/badge/Docker-all%20platforms-lightblue.svg?logo=docker&logoColor=lightblue"/></a>
 
-Save an archived copy of all websites you bookmark (the actual *content* of each site, not just the list of bookmarks).
+<hr/>
+</div>
 
- - <img src="https://nicksweeting.com/images/bookmarks.png" height="22px"/> Browser Bookmarks (Chrome, Firefox, Safari, IE, Opera)
- - <img src="https://getpocket.com/favicon.ico" height="22px"/> Pocket
- - <img src="https://pinboard.in/favicon.ico" height="22px"/> Pinboard
- - <img src="https://nicksweeting.com/images/rss.svg" height="22px"/> RSS
- - Shaarli, Delicious, Instapaper, Reddit Saved Posts, Wallabag, Unmark.it, and more!
+**ArchiveBox takes a list of website URLs you want to archive, and creates a local, static, browsable HTML clone of the content from those websites (it saves HTML, JS, media files, PDFs, images and more).** 
 
-Outputs browsable static html archives of each site, a PDF, a screenshot, and a link to a copy on archive.org, all indexed with nice html & json files.  
+You can use it to preserve access to websites you care about by storing them locally offline.  ArchiveBox imports lists of URLs, renders the pages in a headless, autheticated, user-scriptable browser, and then archives the content in multiple redundant common formats (HTML, PDF, PNG, WARC) that will last long after the originals disappear off the internet.  It automatically extracts assets and media from pages and saves them in easily-accessible folders, with out-of-the-box support for extracting git repositories, audio, video, subtitles, images, PDFs, and more.
 
-[DEMO: sweeting.me/pocket](https://home.sweeting.me/pocket)
+#### How does it work?
 
-<img src="screenshot.png" width="75%" alt="Desktop Screenshot" align="top"><img src="screenshot_mobile.png" width="25%" alt="Mobile Screenshot" align="top"><br/>
+```bash
+echo 'http://example.com' | ./archive
+```
+After installing the dependencies, just pipe some new links into the `./archive` command to start your archive.
+
+ArchiveBox is written in Python 3.5 and uses wget, Chrome headless, youtube-dl, pywb, and other common unix tools to save each page you add in multiple redundant formats.  It doesn't require a constantly running server or backend, just open the generated `output/index.html` in a browser to view the archive. It can import and export links as JSON (among other formats), so it's easy to script or hook up to other APIs.  If you run it on a schedule and import from browser history or bookmarks regularly, you can sleep soundly knowing that the slice of the internet you care about will be automatically preserved in multiple, durable long-term formats that will be accessible for decades (or longer).
+
+<div align="center">
+
+<img src="https://i.imgur.com/3tBL7PU.png" width="30%" alt="CLI Screenshot" align="top">
+<img src="https://i.imgur.com/viklZNG.png" width="30%" alt="Desktop index screenshot" align="top">
+<img src="https://i.imgur.com/RefWsXB.jpg" width="30%" alt="Desktop details page Screenshot"/><br/>
+<sup><a href="https://archive.sweeting.me/">Demo</a> | <a href="https://github.com/pirate/ArchiveBox/wiki/Usage">Usage</a> | <a href="#screenshots">Screenshots</a></sup>
+<br/>
+<sub>. . . . . . . . . . . . . . . . . . . . . . . . . . . .</sub>
+</div><br/>
 
 ## Quickstart
 
-**1. Get your bookmarks:**
-
-Follow the links here to find instructions for exporting bookmarks from each service.
-
- - [Pocket](https://getpocket.com/export)
- - [Pinboard](https://pinboard.in/export/)
- - [Instapaper](https://www.instapaper.com/user/export)
- - [Reddit Saved Posts](https://github.com/csu/export-saved-reddit)
- - [Shaarli](http://shaarli.readthedocs.io/en/master/Backup,-restore,-import-and-export/#export-links-as)
- - [Unmark.it](http://help.unmark.it/import-export)
- - [Wallabag](https://doc.wallabag.org/en/user/import/wallabagv2.html)
- - [Chrome Bookmarks](https://support.google.com/chrome/answer/96816?hl=en)
- - [Firefox Bookmarks](https://support.mozilla.org/en-US/kb/export-firefox-bookmarks-to-backup-or-transfer)
- - [Safari Bookmarks](http://i.imgur.com/AtcvUZA.png)
- - [Opera Bookmarks](http://help.opera.com/Windows/12.10/en/importexport.html)
- - [Internet Explorer Bookmarks](https://support.microsoft.com/en-us/help/211089/how-to-import-and-export-the-internet-explorer-favorites-folder-to-a-32-bit-version-of-windows)
- - Remote file or RSS URL: pass url as second argument in the next step
-
- (If any of these links are broken, please submit an issue and I'll fix it)
-
-**2. Create your archive:**
+ArchiveBox has [3 main dependencies](https://github.com/pirate/ArchiveBox/wiki/Install#dependencies) beyond `python3`: `wget`, `chromium`, and `youtube-dl`.
+To get started, you can [install them manually](https://github.com/pirate/ArchiveBox/wiki/Install) using your system's package manager, use the [automated helper script](https://github.com/pirate/ArchiveBox/wiki/Quickstart), or use the official [Docker](https://github.com/pirate/ArchiveBox/wiki/Docker) container.  All three dependencies are optional if [disabled](https://github.com/pirate/ArchiveBox/wiki/Configuration#archive-method-toggles) in settings.
 
 ```bash
-git clone https://github.com/pirate/bookmark-archiver
-cd bookmark-archiver/
-./setup.sh                                      # install all dependencies
-./archive.py ~/Downloads/bookmark_export.html   # replace with the path to your export file from step 1
+# 1. Install dependencies (use apt on ubuntu, brew on mac, or pkg on BSD)
+apt install python3 python3-pip git curl wget youtube-dl chromium-browser
 
-# OR
-./archive.py https://getpocket.com/users/yourusername/feed/all  # url to an RSS, html, or json links file
+# 2. Download ArchiveBox
+git clone https://github.com/pirate/ArchiveBox.git && cd ArchiveBox
+
+# 3. Add your first links to your archive
+echo 'https://example.com' | ./archive                  # pass URLs to archive via stdin
+
+./archive https://getpocket.com/users/example/feed/all  # or import an RSS/JSON/XML/TXT feed
 ```
 
-**3. Done!**
+One you've added your first links, open `output/index.html` in a browser to view the archive.  [DEMO: archive.sweeting.me](https://archive.sweeting.me)  
+For more information, see the [full Quickstart guide](https://github.com/pirate/ArchiveBox/wiki/Quickstart), [Usage](https://github.com/pirate/ArchiveBox/wiki/Usage), and [Configuration](https://github.com/pirate/ArchiveBox/wiki/Configuration) docs.  
 
-You can open `service/index.html` to view your archive.  (favicons will appear next to each title once it has finished downloading)
+*(`pip install archivebox` will be available in the near future, follow our [Roadmap](https://github.com/pirate/ArchiveBox/wiki/Roadmap) for progress)*
 
-If you want to host your archive somewhere to share it with other people, see the [Publishing Your Archive](#publishing-your-archive) section below.
+---
 
-**4. (Optional) Schedule it to run every day**
+<div align="center">
+<img src="https://i.imgur.com/PVO88AZ.png" width="80%"/>
+</div>
 
-You can import links from any local file path or feed url by changing the second argument to `archive.py`.
-Bookmark Archiver will ignore links that are imported multiple times, it will keep the earliest version that it's seen.
-This means you can add multiple cron jobs to pull links from several different feeds or files each day,
-it will keep the index up-to-date without duplicate links.
+# Overview
 
-This example archives a pocket RSS feed and an export file every 24 hours, and saves the output to a logfile.
-```bash
-0 24 * * * yourusername /opt/bookmark-archiver/archive.py https://getpocket.com/users/yourusername/feed/all > /var/log/bookmark_archiver_rss.log
-0 24 * * * yourusername /opt/bookmark-archiver/archive.py /home/darth-vader/Desktop/bookmarks.html > /var/log/bookmark_archiver_firefox.log
-```
-(Add the above lines to `/etc/crontab`)
+Because modern websites are complicated and often rely on dynamic content, 
+ArchiveBox archives the sites in **several different formats** beyond what public 
+archiving services like Archive.org and Archive.is are capable of saving. Using multiple 
+methods and the market-dominant browser to execute JS ensures we can save even the most 
+complex, finicky websites in at least a few high-quality, long-term data formats.
 
-**Next Steps**  
-  
-If you have any trouble, see the [Troubleshooting](#troubleshooting) section at the bottom.  
-If you'd like to customize options, see the [Configuration](#configuration) section.  
+ArchiveBox imports a list of URLs from stdin, remote URL, or file, then adds the pages to a local archive folder using wget to create a browsable HTML clone, youtube-dl to extract media, and a full instance of Chrome headless for PDF, Screenshot, and DOM dumps, and more...
 
-If you want something easier than running programs in the command-line, take a look at [Pocket Premium](https://getpocket.com/premium) (yay Mozilla!) and [Pinboard Pro](https://pinboard.in/upgrade/), which both offer easy-to-use bookmark archiving with full-text-search.
+Running `./archive` adds only new, unique links into `output/` on each run. Because it will ignore duplicates and only archive each link the first time you add it, you can schedule it to [run on a timer](https://github.com/pirate/ArchiveBox/wiki/Scheduled-Archiving) and re-import all your feeds multiple times a day. It will run quickly even if the feeds are large, because it's only archiving the newest links since the last run.  For each link, it runs through all the archive methods. Methods that fail will save `None` and be automatically retried on the next run, methods that succeed save their output into the data folder and are never retried/overwritten by subsequent runs.  Support for saving multiple snapshots of each site over time will be [added soon](https://github.com/pirate/ArchiveBox/issues/179) (along with the ability to view diffs of the changes between runs).
 
-## Details
+All the archived links are stored by date bookmarked in `output/archive/<timestamp>`, and everything is indexed nicely with JSON & HTML files. The intent is for all the content to be viewable with common software in 50 - 100 years without needing to run ArchiveBox in a VM.
 
-`archive.py` is a script that takes a [Pocket-format](https://getpocket.com/export), [JSON-format](https://pinboard.in/export/), [Netscape-format](https://msdn.microsoft.com/en-us/library/aa753582(v=vs.85).aspx), or RSS-formatted list of links, and downloads a clone of each linked website to turn into a browsable archive that you can store locally or host online.
-
-The archiver produces an output folder `html/` containing an `index.html`, `index.json`, and archived copies of all the sites,
-organized by timestamp bookmarked.  It's Powered by [headless](https://developers.google.com/web/updates/2017/04/headless-chrome) Chromium and good 'ol `wget`.
-
-For each sites it saves:
-
- - wget of site, e.g. `en.wikipedia.org/wiki/Example.html` with .html appended if not present
- - `screenshot.png` 1440x900 screenshot of site using headless chrome
- - `output.pdf` Printed PDF of site using headless chrome
- - `archive.org.txt` A link to the saved site on archive.org
- - `audio/` and `video/` for sites like youtube, soundcloud, etc. (using youtube-dl) (WIP)
- - `git/` clone of the repository for github, bitbucket, or gitlab links (WIP)
- - `index.json` JSON index containing link info and archive details
- - `index.html` HTML index containing link info and archive details (optional fancy or simple index)
-
-Wget doesn't work on sites you need to be logged into, but chrome headless does, see the [Configuration](#configuration)* section for `CHROME_USER_DATA_DIR`.
-
-**Large Exports & Estimated Runtime:** 
-
-I've found it takes about an hour to download 1000 articles, and they'll take up roughly 1GB.  
-Those numbers are from running it single-threaded on my i5 machine with 50mbps down.  YMMV.  
-
-You can run it in parallel by using the `resume` feature, or by manually splitting export.html into multiple files:
-```bash
-./archive.py export.html 1498800000 &  # second argument is timestamp to resume downloading from
-./archive.py export.html 1498810000 &
-./archive.py export.html 1498820000 &
-./archive.py export.html 1498830000 &
-```
-Users have reported running it with 50k+ bookmarks with success (though it will take more RAM while running).
-
-## Configuration
-
-You can tweak parameters via environment variables, or by editing `config.py` directly:
-```bash
-env CHROME_BINARY=google-chrome-stable RESOLUTION=1440,900 FETCH_PDF=False ./archive.py ~/Downloads/bookmarks_export.html
-```
-
-**Shell Options:**
- - colorize console ouput: `USE_COLOR` value: [`True`]/`False`
- - show progress bar: `SHOW_PROGRESS` value: [`True`]/`False`
- - archive permissions: `ARCHIVE_PERMISSIONS` values: [`755`]/`644`/`...`
-
-**Dependency Options:**
- - path to Chrome: `CHROME_BINARY` values: [`chromium-browser`]/`/usr/local/bin/google-chrome`/`...`
- - path to wget: `WGET_BINARY` values: [`wget`]/`/usr/local/bin/wget`/`...`
-
-**Archive Options:**
- - maximum allowed download time per link: `TIMEOUT` values: [`60`]/`30`/`...`
- - archive methods (values: [`True`]/`False`):
-   - fetch page with wget: `FETCH_WGET`
-   - fetch images/css/js with wget: `FETCH_WGET_REQUISITES` (True is highly recommended)
-   - print page as PDF: `FETCH_PDF`
-   - fetch a screenshot of the page: `FETCH_SCREENSHOT`
-   - fetch a favicon for the page: `FETCH_FAVICON`
-   - submit the page to archive.org: `SUBMIT_ARCHIVE_DOT_ORG` 
- - screenshot: `RESOLUTION` values: [`1440,900`]/`1024,768`/`...`
- - user agent: `WGET_USER_AGENT` values: [`Wget/1.19.1`]/`"Mozilla/5.0 ..."`/`...`
- - chrome profile: `CHROME_USER_DATA_DIR` values: [`~/Library/Application\ Support/Google/Chrome/Default`]/`/tmp/chrome-profile`/`...`
-    To capture sites that require a user to be logged in, you must specify a path to a chrome profile (which loads the cookies needed for the user to be logged in).  If you don't have an existing chrome profile, create one with `chromium-browser --disable-gpu --user-data-dir=/tmp/chrome-profile`, and log into the sites you need.  Then set `CHROME_USER_DATA_DIR=/tmp/chrome-profile` to make Bookmark Archiver use that profile.
-
-**Index Options:**
- - html index template: `INDEX_TEMPLATE` value:  [`templates/index.html`]/`...`
- - html index row template: `INDEX_ROW_TEMPLATE` value:  [`templates/index_row.html`]/`...`
- - html link index template: `LINK_INDEX_TEMPLATE` value: [`templates/link_index_fancy.html`]/`templates/link_index.html`/`...`
-
- (See defaults & more at the top of `config.py`)
-
-To tweak the outputted html index file's look and feel, just copy the files in `templates/` somewhere else and edit away.  Use the two index config variables above to point the script to your new custom template files. 
-
-The chrome/chromium dependency is _optional_ and only required for screenshots and PDF output, can be safely ignored if both of those are disabled.
-
-## Publishing Your Archive
-
-The archive produced by `./archive.py` is suitable for serving on any provider that can host static html (e.g. github pages!).
-
-You can also serve it from a home server or VPS by uploading the outputted `html` folder to your web directory, e.g. `/var/www/bookmark-archiver` and configuring your webserver.
-
-Here's a sample nginx configuration that works to serve archive folders:
-
-```nginx
-location / {
-    alias       /var/www/bookmark-archiver/;
-    index       index.html;
-    autoindex   on;               # see directory listing upon clicking "The Files" links
-    try_files   $uri $uri/ =404;
-}
-```
-
-Make sure you're not running any content as CGI or PHP, you only want to serve static files!
-
-Urls look like: `https://archive.example.com/archive/1493350273/en.wikipedia.org/wiki/Dining_philosophers_problem.html`
-
-**Security WARNING & Content Disclaimer**
-
-Re-hosting other people's content has security implications for any other sites sharing your hosting domain.  Make sure you understand
-the dangers of hosting unknown archived CSS & JS files [on your shared domain](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).
-Due to the security risk of serving some malicious JS you archived by accident, it's best to put this on a domain or subdomain
-of its own to keep cookies separate and slightly mitigate [CSRF attacks](https://en.wikipedia.org/wiki/Cross-site_request_forgery) and other nastiness.
-
-You may also want to blacklist your archive in `/robots.txt` if you don't want to be publicly assosciated with all the links you archive via search engine results.
-
-Be aware that some sites you archive may not allow you to rehost their content publicly for copyright reasons,
-it's up to you to host responsibly and respond to takedown requests appropriately.
-
-## Info & Motivation
-
-This is basically an open-source version of [Pocket Premium](https://getpocket.com/premium) (which you should consider paying for!).
-I got tired of sites I saved going offline or changing their URLS, so I started
-archiving a copy of them locally now, similar to The Way-Back Machine provided
-by [archive.org](https://archive.org).  Self hosting your own archive allows you to save
-PDFs & Screenshots of dynamic sites in addition to static html, something archive.org doesn't do.
-
-Now I can rest soundly knowing important articles and resources I like wont dissapear off the internet.
-
-My published archive as an example: [sweeting.me/pocket](https://home.sweeting.me/pocket).
-
-## Manual Setup
-
-If you don't like running random setup scripts off the internet (:+1:), you can follow these manual setup instructions.
-
-**1. Install dependencies:** `chromium >= 59`,` wget >= 1.16`, `python3 >= 3.5`  (`google-chrome >= v59` works fine as well)
-
-If you already have Google Chrome installed, or wish to use that instead of Chromium, follow the [Google Chrome Instructions](#google-chrome-instructions).
+#### Can import links from many formats:
 
 ```bash
-# On Mac:
-brew cask install chromium  # If you already have Google Chrome/Chromium in /Applications/, skip this command
-brew install wget python3
-
-echo -e '#!/bin/bash\n/Applications/Chromium.app/Contents/MacOS/Chromium "$@"' > /usr/local/bin/chromium-browser  # see instructions for google-chrome below
-chmod +x /usr/local/bin/chromium-browser
+echo 'http://example.com' | ./archive
+./archive ~/Downloads/firefox_bookmarks_export.html
+./archive https://example.com/some/rss/feed.xml
 ```
+ - <img src="https://nicksweeting.com/images/bookmarks.png" height="22px"/> Browser history or bookmarks exports (Chrome, Firefox, Safari, IE, Opera, and more)
+ - <img src="https://nicksweeting.com/images/rss.svg" height="22px"/> RSS, XML, JSON, CSV, SQL, HTML, Markdown, TXT, or any other text-based format
+ - <img src="https://getpocket.com/favicon.ico" height="22px"/> Pocket, Pinboard, Instapaper, Shaarli, Delicious, Reddit Saved Posts, Wallabag, Unmark.it, OneTab, and more
+
+See the [Usage: CLI](https://github.com/pirate/ArchiveBox/wiki/Usage#CLI-Usage) page for documentation and examples.
+
+#### Saves lots of useful stuff for each imported link:
 
 ```bash
-# On Ubuntu/Debian:
-apt install chromium-browser python3 wget
+ ls output/archive/<timestamp>/
 ```
 
-```bash
-# Check that everything worked:
-chromium-browser --version && which wget && which python3 && which curl && echo "[√] All dependencies installed."
+ - **Index:** `index.html` & `index.json` HTML and JSON index files containing metadata and details
+ - **Title:** `title` title of the site
+ - **Favicon:** `favicon.ico` favicon of the site
+ - **WGET Clone:** `example.com/page-name.html` wget clone of the site, with .html appended if not present
+ - **WARC:** `warc/<timestamp>.gz` gzipped WARC of all the resources fetched while archiving
+ - **PDF:** `output.pdf` Printed PDF of site using headless chrome
+ - **Screenshot:** `screenshot.png` 1440x900 screenshot of site using headless chrome
+ - **DOM Dump:** `output.html` DOM Dump of the HTML after rendering using headless chrome
+ - **URL to Archive.org:** `archive.org.txt` A link to the saved site on archive.org
+ - **Audio & Video:** `media/` all audio/video files + playlists, including subtitles & metadata with youtube-dl
+ - **Source Code:** `git/` clone of any repository found on github, bitbucket, or gitlab links
+ - *More coming soon! See the [Roadmap](https://github.com/pirate/ArchiveBox/wiki/Roadmap)...*
+
+It does everything out-of-the-box by default, but you can disable or tweak [individual archive methods](https://github.com/pirate/ArchiveBox/wiki/Configuration) via environment variables or config file.
+
+If you're importing URLs with secret tokens in them (e.g Google Docs, CodiMD notepads, etc), you may want to disable some of these methods to avoid leaking private URLs to 3rd party APIs during the archiving process.  See the [Security Overview](https://github.com/pirate/ArchiveBox/wiki/Security-Overview#stealth-mode) page for more details.
+
+## Key Features
+
+ - [**Free & open source**](https://github.com/pirate/ArchiveBox/blob/master/LICENSE), doesn't require signing up for anything, stores all data locally
+ - [**Few dependencies**](https://github.com/pirate/ArchiveBox/wiki/Install#dependencies) and [simple command line interface](https://github.com/pirate/ArchiveBox/wiki/Usage#CLI-Usage)
+ - [**Comprehensive documentation**](https://github.com/pirate/ArchiveBox/wiki), [active development](https://github.com/pirate/ArchiveBox/wiki/Roadmap), and [rich community](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community)
+ - **Doesn't require a constantly-running server**, proxy, or native app
+ - Easy to set up **[scheduled importing](https://github.com/pirate/ArchiveBox/wiki/Scheduled-Archiving) from multiple sources**
+ - Uses common, **durable, [long-term formats](#saves-lots-of-useful-stuff-for-each-imported-link)** like HTML, JSON, PDF, PNG, and WARC
+ - **Suitable for paywalled / [authenticated content](https://github.com/pirate/ArchiveBox/wiki/Configuration#chrome_user_data_dir)** (can use your cookies)
+ - Can [**run scripts during archiving**](https://github.com/pirate/ArchiveBox/issues/51) to [scroll pages](https://github.com/pirate/ArchiveBox/issues/80), [close modals](https://github.com/pirate/ArchiveBox/issues/175), expand comment threads, etc.
+ - Can also [**mirror content to 3rd-party archiving services**](https://github.com/pirate/ArchiveBox/wiki/Configuration#submit_archive_dot_org) automatically for redundancy
+
+## Background & Motivation
+
+Vast treasure troves of knowledge are lost every day on the internet to link rot.  As a society, we have an imperative to preserve some important parts of that treasure, just like we preserve our books, paintings, and music in physical libraries long after the originals go out of print or fade into obscurity.
+
+Whether it's to resist censorship by saving articles before they get taken down or edited, or
+just to save a collection of early 2010's flash games you love to play, having the tools to 
+archive internet content enables to you save the stuff you care most about before it disappears.
+
+<div align="center">
+<img src="https://i.imgur.com/bC6eZcV.png" width="50%"/><br/>
+ <sup><i>Image from <a href="https://digiday.com/media/wtf-link-rot/">WTF is Link Rot?</a>...</i><br/></sup>
+</div>
+
+The balance between the permanence and ephemeral nature of content on the internet is part of what makes it beautiful. 
+I don't think everything should be preserved in an automated fashion, making all content permanent and never removable, but I do think people should be able to decide for themselves and effectively archive specific content that they care about.
+
+
+## Comparison to Other Projects
+
+▶ **Check out our [community page](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community) for an index of web archiving initiatives and projects.**
+
+<img src="https://i.imgur.com/4nkFjdv.png" width="10%" align="left"/> The aim of ArchiveBox is to go beyond what the Wayback Machine and other public archiving services can do, by adding a headless browser to replay sessions accurately, and by automatically extracting all the content in multiple redundant formats that will survive being passed down to historians and archivists through many generations.
+
+#### User Interface & Intended Purpose
+
+ArchiveBox differentiates itself from [similar projects](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community#Web-Archiving-Projects) by being a simple, one-shot CLI inferface for users to ingest built feeds of URLs over extended periods, as opposed to being a backend service that ingests individual, manually-submitted URLs from a web UI.
+
+An alternative tool [pywb](https://github.com/webrecorder/pywb) allows you to run a browser through an always-running archiving proxy which records the traffic to WARC files.  ArchiveBox intends to support this style of live proxy-archiving using `pywb` in the future, but for now it only ingests lists of links at a time via browser history, bookmarks, RSS, etc.
+
+#### Private Local Archives vs Centralized Public Archives
+
+Unlike crawler software that starts from a seed URL and works outwards, or public tools like Archive.org designed for users to manually submit links from the public internet, ArchiveBox tries to be a set-and-forget archiver suitable for archiving your entire browsing history, RSS feeds, or bookmarks, including private/authenticated content that you wouldn't otherwise share with a centralized service.  Also by having each user store their own content locally, we can save much larger portions of everyone's browsing history than a shared centralized service would be able to handle.
+
+#### Storage Requirements
+
+Because ArchiveBox is designed to ingest a firehose of browser history and bookmark feeds to a local disk, it can be much more disk-space intensive than a centralized service like the Internet Archive or Archive.today.  However, as storage space gets cheaper and compression improves, you should be able to use it continuously over the years without having to delete anything.  In my experience, ArchiveBox uses about 5gb per 1000 articles, but your milage may vary depending on which options you have enabled and what types of sites you're archiving. By default, it archives everything in as many formats as possible, meaning it takes more space than a using a single method, but more content is accurately replayable over extended periods of time. Storage requirements can be reduced by using a compressed/deduplicated filesystem like ZFS/BTRFS, or by setting `SAVE_MEDIA=False` to skip audio & video files.
+
+## Learn more
+
+▶ **Join out our [community chat](http://webchat.freenode.net?channels=ArchiveBox&uio=d4) hosted on IRC freenode.net:`#ArchiveBox`!**
+
+Whether you want learn which organizations are the big players in the web archiving space, want to find a specific open source tool for your web archiving need, or just want to see where archivists hang out online, our Community Wiki page serves as an index of the broader web archiving community.  Check it out to learn about some of the coolest web archiving projects and communities on the web!
+
+<img src="https://i.imgur.com/0ZOmOvN.png" width="14%" align="right"/>
+
+ - [Community Wiki](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community)
+   + [The Master Lists](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community#The-Master-Lists)  
+     *Community-maintained indexes of archiving tools and institutions.* 
+   + [Web Archiving Software](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community#Web-Archiving-Projects)  
+     *Open source tools and projects in the internet archiving space.*
+   + [Reading List](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community#Reading-List)  
+     *Articles, posts, and blogs relevant to ArchiveBox and web archiving in general.*
+   + [Communities](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community#Communities)  
+     *A collection of the most active internet archiving communities and initiatives.*
+ - Check out the ArchiveBox [Roadmap](https://github.com/pirate/ArchiveBox/wiki/Roadmap) and [Changelog](https://github.com/pirate/ArchiveBox/wiki/Changelog)
+ - Learn why archiving the internet is important by reading the "[On the Importance of Web Archiving](https://parameters.ssrc.org/2018/09/on-the-importance-of-web-archiving/)" blog post.
+ - Or reach out to me for questions and comments via [@theSquashSH](https://twitter.com/thesquashSH) on Twitter.
+ 
+---
+ 
+# Documentation
+
+<img src="https://read-the-docs-guidelines.readthedocs-hosted.com/_images/logo-dark.png" width="13%" align="right"/>
+
+We use the [Github wiki system](https://github.com/pirate/ArchiveBox/wiki) and [Read the Docs](https://archivebox.readthedocs.io/en/latest/) for documentation.
+
+You can also access the docs locally by looking in the [`ArchiveBox/docs/`](https://github.com/pirate/ArchiveBox/wiki/Home) folder.
+
+You can build the docs by running:
+```python
+cd ArchiveBox
+pipenv install --dev
+sphinx-apidoc -o docs archivebox
+cd docs/
+make html
+# then open docs/_build/html/index.html
 ```
 
-**2. Get your bookmark export file:**
+## Getting Started
 
-Follow the instruction links above in the "Quickstart" section to download your bookmarks export file.
+ - [Quickstart](https://github.com/pirate/ArchiveBox/wiki/Quickstart)
+ - [Install](https://github.com/pirate/ArchiveBox/wiki/Install)
+ - [Docker](https://github.com/pirate/ArchiveBox/wiki/Docker)
 
-**3. Run the archive script:**
+## Reference
 
-1. Clone this repo `git clone https://github.com/pirate/bookmark-archiver`
-3. `cd bookmark-archiver/`
-4. `./archive.py ~/Downloads/bookmarks_export.html`
+ - [Usage](https://github.com/pirate/ArchiveBox/wiki/Usage)
+ - [Configuration](https://github.com/pirate/ArchiveBox/wiki/Configuration)
+ - [Supported Sources](https://github.com/pirate/ArchiveBox/wiki/Quickstart#2-get-your-list-of-urls-to-archive)
+ - [Supported Outputs](https://github.com/pirate/ArchiveBox/wiki#can-save-these-things-for-each-site)
+ - [Scheduled Archiving](https://github.com/pirate/ArchiveBox/wiki/Scheduled-Archiving)
+ - [Publishing Your Archive](https://github.com/pirate/ArchiveBox/wiki/Publishing-Your-Archive)
+ - [Chromium Install](https://github.com/pirate/ArchiveBox/wiki/Install-Chromium)
+ - [Security Overview](https://github.com/pirate/ArchiveBox/wiki/Security-Overview)
+ - [Troubleshooting](https://github.com/pirate/ArchiveBox/wiki/Troubleshooting)
 
-You may optionally specify a second argument to `archive.py export.html 153242424324` to resume the archive update at a specific timestamp.
+## More Info
 
-If you have any trouble, see the [Troubleshooting](#troubleshooting) section at the bottom.
+ - [Roadmap](https://github.com/pirate/ArchiveBox/wiki/Roadmap)
+ - [Changelog](https://github.com/pirate/ArchiveBox/wiki/Changelog)
+ - [Donations](https://github.com/pirate/ArchiveBox/wiki/Donations)
+ - [Background & Motivation](https://github.com/pirate/ArchiveBox#background--motivation)
+ - [Web Archiving Community](https://github.com/pirate/ArchiveBox/wiki/Web-Archiving-Community)
 
-### Google Chrome Instructions:
-
-I recommend Chromium instead of Google Chrome, since it's open source and doesn't send your data to Google.
-Chromium may have some issues rendering some sites though, so you're welcome to try Google-chrome instead.
-It's also easier to use Google Chrome if you already have it installed, rather than downloading Chromium all over.
-
-1. Install & link google-chrome
-```bash
-# On Mac:
-# If you already have Google Chrome in /Applications/, skip this brew command
-brew cask install google-chrome
-brew install wget python3
-
-echo -e '#!/bin/bash\n/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "$@"' > /usr/local/bin/google-chrome
-chmod +x /usr/local/bin/google-chrome
-```
-
-```bash
-# On Linux:
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-apt update; apt install google-chrome-beta python3 wget
-```
-
-2. Set the environment variable `CHROME_BINARY` to `google-chrome` before running:
-
-```bash
-env CHROME_BINARY=google-chrome ./archive.py ~/Downloads/bookmarks_export.html
-```
-If you're having any trouble trying to set up Google Chrome or Chromium, see the Troubleshooting section below.
-
-## Troubleshooting
-
-### Dependencies
-
-**Python:**
-
-On some Linux distributions the python3 package might not be recent enough.
-If this is the case for you, resort to installing a recent enough version manually.
-```bash
-add-apt-repository ppa:fkrull/deadsnakes && apt update && apt install python3.6
-```
-If you still need help, [the official Python docs](https://docs.python.org/3.6/using/unix.html) are a good place to start.
-
-**Chromium/Google Chrome:**
-
-`archive.py` depends on being able to access a `chromium-browser`/`google-chrome` executable.  The executable used
-defaults to `chromium-browser` but can be manually specified with the environment variable `CHROME_BINARY`:
-
-```bash
-env CHROME_BINARY=/usr/local/bin/chromium-browser ./archive.py ~/Downloads/bookmarks_export.html
-```
-
-1. Test to make sure you have Chrome on your `$PATH` with:
-
-```bash
-which chromium-browser || which google-chrome
-```
-If no executable is displayed, follow the setup instructions to install and link one of them.
-
-2. If a path is displayed, the next step is to check that it's runnable:
-
-```bash
-chromium-browser --version || google-chrome --version
-```
-If no version is displayed, try the setup instructions again, or confirm that you have permission to access chrome.
-
-3. If a version is displayed and it's `<59`, upgrade it:
-
-```bash
-apt upgrade chromium-browser -y
-# OR
-brew cask upgrade chromium-browser
-```
-
-4. If a version is displayed and it's `>=59`, make sure `archive.py` is running the right one:
-
-```bash
-env CHROME_BINARY=/path/from/step/1/chromium-browser ./archive.py bookmarks_export.html   # replace the path with the one you got from step 1
-```
+---
 
 
-**Wget & Curl:**
+# Screenshots
 
-If you're missing `wget` or `curl`, simply install them using `apt` or your package manager of choice.
-See the "Manual Setup" instructions for more details.
+<div align="center">
+<img src="https://i.imgur.com/biVfFYr.png" width="18%" alt="CLI Screenshot" align="top">
+<img src="https://i.imgur.com/viklZNG.png" width="40%" alt="Desktop index screenshot" align="top">
+<img src="https://i.imgur.com/wnpdAVM.jpg" width="30%" alt="Desktop details page Screenshot" align="top">
+<img src="https://i.imgur.com/mW2dITg.png" width="8%" alt="Mobile details page screenshot" align="top">
+</div>
 
-If wget times out or randomly fails to download some sites that you have confirmed are online,
-upgrade wget to the most recent version with `brew upgrade wget` or `apt upgrade wget`.  There is
-a bug in versions `<=1.19.1_1` that caused wget to fail for perfectly valid sites.
+---
 
-### Archiving
+<div align="center">
+<br/><br/>
+<img src="https://raw.githubusercontent.com/Monadical-SAS/redux-time/HEAD/examples/static/jeremy.jpg" height="40px"/>
+<br/>
+<sub><i>This project is maintained mostly in <a href="https://nicksweeting.com/blog#About">my spare time</a> with the help from generous contributors.</i></sub>
+<br/><br/>
+Contributor Spotlight:<br/><br/>
+ 
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/0"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/0"></a>
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/1"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/1"></a>
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/2"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/2"></a>
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/3"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/3"></a>
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/4"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/4"></a>
+<a href="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/links/5"><img src="https://sourcerer.io/fame/pirate/pirate/ArchiveBox/images/5"></a>
 
-**No links parsed from export file:**
+<br/>
+<a href="https://www.patreon.com/theSquashSH"><img src="https://img.shields.io/badge/Donate_to_support_development-via_Patreon-%23DD5D76.svg?style=flat"/></a>
+<br/>
+<br/>
+<a href="https://twitter.com/thesquashSH"><img src="https://img.shields.io/badge/Tweet-%40theSquashSH-blue.svg?style=flat"/></a>
+<a href="https://github.com/pirate/ArchiveBox"><img src="https://img.shields.io/github/stars/pirate/ArchiveBox.svg?style=flat&label=Star+on+Github"/></a>
+<a href="http://webchat.freenode.net?channels=ArchiveBox&uio=d4"><img src="https://img.shields.io/badge/Community_chat-IRC-%2328A745.svg"/></a>
 
-Please open an [issue](https://github.com/pirate/bookmark-archiver/issues) with a description of where you got the export, and
-preferrably your export file attached (you can redact the links).  We'll fix the parser to support your format.
+<br/><br/>
 
-**Lots of skipped sites:**
-
-If you ran the archiver once, it wont re-download sites subsequent times, it will only download new links.
-If you haven't already run it, make sure you have a working internet connection and that the parsed URLs look correct.
-You can check the `archive.py` output or `index.html` to see what links it's downloading.
-
-If you're still having issues, try deleting or moving the `service/archive` folder and running `archive.py` again.
-
-**Lots of errors:**
-
-Make sure you have all the dependencies installed and that you're able to visit the links from your browser normally.
-Open an [issue](https://github.com/pirate/bookmark-archiver/issues) with a description of the errors if you're still having problems.
-
-**Lots of broken links from the index:**
-
-Not all sites can be effectively archived with each method, that's why it's best to use a combination of `wget`, PDFs, and screenshots.
-If it seems like more than 10-20% of sites in the archive are broken, open an [issue](https://github.com/pirate/bookmark-archiver/issues)
-with some of the URLs that failed to be archived and I'll investigate.
-
-### Hosting the Archive
-
-If you're having issues trying to host the archive via nginx, make sure you already have nginx running with SSL.
-If you don't, google around, there are plenty of tutorials to help get that set up.  Open an [issue](https://github.com/pirate/bookmark-archiver/issues)
-if you have problem with a particular nginx config.
-
-## Roadmap
-
-If you feel like contributing a PR, some of these tasks are pretty easy.  Feel free to open an issue if you need help getting started in any way!
-
- - download closed-captions text from youtube videos
- - body text extraction using [fathom](https://hacks.mozilla.org/2017/04/fathom-a-framework-for-understanding-web-pages/)
- - auto-tagging based on important extracted words
- - audio & video archiving with `youtube-dl`
- - full-text indexing with elasticsearch/elasticlunr/ag
- - video closed-caption downloading for full-text indexing video content
- - automatic text summaries of article with summarization library
- - feature image extraction
- - http support (from my https-only domain)
- - try wgetting dead sites from archive.org (https://github.com/hartator/wayback-machine-downloader)
- - live updating from pocket/pinboard
-
-It's possible to pull links via the pocket API or public pocket RSS feeds instead of downloading an html export.
-Once I write a script to do that, we can stick this in `cron` and have it auto-update on it's own.
-
-For now you just have to download `ril_export.html` and run `archive.py` each time it updates. The script
-will run fast subsequent times because it only downloads new links that haven't been archived already.
-
-## Links
-
- - [Hacker News Discussion](https://news.ycombinator.com/item?id=14272133)
- - [Reddit r/selfhosted Discussion](https://www.reddit.com/r/selfhosted/comments/69eoi3/pocket_stream_archive_your_own_personal_wayback/)
- - [Reddit r/datahoarder Discussion #1](https://www.reddit.com/r/DataHoarder/comments/69e6i9/archive_a_browseable_copy_of_your_saved_pocket/)
- - [Reddit r/datahoarder Discussion #2](https://www.reddit.com/r/DataHoarder/comments/6kepv6/bookmarkarchiver_now_supports_archiving_all_major/)
- - https://wallabag.org + https://github.com/wallabag/wallabag
- - https://webrecorder.io/
- - https://github.com/ikreymer/webarchiveplayer#auto-load-warcs
- - [Shaarchiver](https://github.com/nodiscc/shaarchiver) very similar project that archives Firefox, Shaarli, or Delicious bookmarks and all linked media, generating a markdown/HTML index
- - [Sheetsee-Pocket](http://jlord.us/sheetsee-pocket/) project that provides a pretty auto-updating index of your Pocket links (without archiving them)
- - [Pocket -> IFTTT -> Dropbox](https://christopher.su/2013/saving-pocket-links-file-day-dropbox-ifttt-launchd/) Post by Christopher Su on his Pocket saving IFTTT recipie
-
-## Changelog
-
- - v0.0.3 released
- - support for chrome `--user-data-dir` to archive sites that need logins
- - fancy individual html & json indexes for each link
- - smartly append new links to existing index instead of overwriting 
-  - v0.0.2 released
- - proper HTML templating instead of format strings (thanks to https://github.com/bardisty!)
- - refactored into separate files, wip audio & video archiving
- - v0.0.1 released
- - Index links now work without nginx url rewrites, archive can now be hosted on github pages
- - added setup.sh script & docstrings & help commands
- - made Chromium the default instead of Google Chrome (yay free software)
- - added [env-variable](https://github.com/pirate/bookmark-archiver/pull/25) configuration (thanks to https://github.com/hannah98!)
- - renamed from **Pocket Archive Stream** -> **Bookmark Archiver**
- - added [Netscape-format](https://github.com/pirate/bookmark-archiver/pull/20) export support (thanks to https://github.com/ilvar!)
- - added [Pinboard-format](https://github.com/pirate/bookmark-archiver/pull/7) export support (thanks to https://github.com/sconeyard!)
- - front-page of HN, oops! apparently I have users to support now :grin:?
- - added Pocket-format export support
- - v0.0.0 released: created Pocket Archive Stream 2017/05/05
+</div>

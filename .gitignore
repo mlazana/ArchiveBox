@@ -1,19 +1,27 @@
-# Pocket archive output folder
-pocket/
-bookmarks/
-pinboard/
-html/
-downloads/
+# OS cruft
+.DS_Store
+._*
 
-# Byte-compiled / optimized / DLL files
+# python
 __pycache__/
+.mypy_cache/
+venv
+.venv
+archivebox/.venv
+archivebox/venv
+archivebox/docs/_build
 
-# Virtualenv
-env/
-ENV/
-venv/
-VENV/
-.venv/
-.env/
-.python-version
-.env
+# vim
+.swp*
+
+# output artifacts
+output
+output/
+data
+data/
+archivebox/output
+archivebox/data
+
+archivebox.egg-info/
+build/
+dist/
